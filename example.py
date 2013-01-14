@@ -31,7 +31,8 @@ print ts3.decode(ts3.sendCommand('sendtextmessage '+args))
 def callback(message, ts3):
     print message['invokername']+': '+message['msg']
     # If a client says 'go away' then we'l stop the listener
-
+    if message['msg'] == 'go away':
+        return False
 # Register the listener
 ts3.registerEvent(callableack, event='textchannel', cid=1)
 
