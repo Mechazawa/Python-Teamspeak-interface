@@ -88,7 +88,7 @@ class TeamSpeak:
         while True:
             try:
                 message = self.connection.read_until('\n\r',7200)
-                if not callback(self, message): return
+                if callback(self, message) == False: return
             except:
                 self.connect()
                 if username != None:
