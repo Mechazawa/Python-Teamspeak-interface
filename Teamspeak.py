@@ -121,7 +121,6 @@ class TeamSpeak:
         self.ioLock.acquire()
         self.connection.write(str(self.virtualserver)+'\n\r')
         self.decode(self.connection.read_until('\n\r',5))
-        for i in range(postRead): self.connection.read_until("\n\r", 5)
         self.ioLock.release()
         if int(data['id']) != 0:
             raise Exception('Unable to select virtual server\n\r'+raw)
