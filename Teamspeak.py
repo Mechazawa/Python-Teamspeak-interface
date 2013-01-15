@@ -119,8 +119,9 @@ class TeamSpeak:
             raise Exception('Teamspeak connection refused')
         #connect to the Virtual Server
         self.ioLock.acquire()
-        self.connection.write(str(self.virtualserver)+'\n\r')
-        data = self.decode(self.connection.read_until('\n\r',5))
+        self.connection.write('use '+str(self.virtualserver)+'\n\r')
+        raw = self.connection.read_until('\n\r',5)
+        data = self.decode(raw)
         self.ioLock.release()
         if int(data['id']) != 0:
             raise Exception('Unable to select virtual server\n\r'+raw)
