@@ -1,5 +1,5 @@
 #import TeamSpeak stuff
-import telnetlib, time
+import telnetlib
 from threading import Lock
 
 class TeamSpeak:
@@ -9,7 +9,8 @@ class TeamSpeak:
         self.ioLock = Lock()
         self.connected = False
         self.listenThread = None
-        self.encoding = {"\\":"\\\\", "/":"\\/",
+        self.encoding = {
+            "\\":"\\\\", "/":"\\/",
             " ":"\\s", "|":"\\p",
             "\a":"\\a", "\b":"\\b",
             "\f":"\\f", "\n":"\\n",
@@ -58,7 +59,8 @@ class TeamSpeak:
         """
         Send a command to the server and receive the output
         """
-        if not self.connected: raise Exception('Not connected to a TeamSpeak server')
+        if not self.connected:
+            raise Exception('Not connected to a TeamSpeak server')
         self.ioLock.acquire()
         if command != '':
             self.connection.write(command+'\n\r')
@@ -105,7 +107,7 @@ class TeamSpeak:
         """
         Create a new connection
         """
-        self.connected = True
+        self.connected = False
         self.virtualserver = server
         #Create new connction
         self.ioLock.acquire()
@@ -114,11 +116,13 @@ class TeamSpeak:
         self.connection.read_until("\n\r", 5)
         self.ioLock.release()
         if not 'TS3' in data:
-            self.connected = False
             raise Exception('Teamspeak connection refused')
         #connect to the Virtual Server
-        raw = self.sendCommand('use '+str(self.virtualserver))
-        data = self.decode(raw)
+        self.ioLock.acquire()
+        self.connection.write(str(self.virtualserver)+'\n\r')
+        self.decode(self.connection.read_until('\n\r',5))
+        for i in range(postRead): self.connection.read_until("\n\r", 5)
+        self.ioLock.release()
         if int(data['id']) != 0:
-            self.connected = False
             raise Exception('Unable to select virtual server\n\r'+raw)
+        self.connected= True
