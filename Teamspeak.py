@@ -95,7 +95,6 @@ class TeamSpeak:
         # Todo: clean this shit up
         callback = None
         event='textchannel'
-        threaded=False
         cid=None
         username=None
         password=None
@@ -105,10 +104,7 @@ class TeamSpeak:
 
         if args.has_key("callback") and hasattr(args['callback'], '__call__'): callback = args['callback']
         elif args.has_key("callback") and not hasattr(args['callback'], '__call__'): raise Exception('callback is not a function')
-
-        # if args.has_key("threaded") and isinstance(args['threaded'],bool): threaded = args['threaded']
-        # elif args.has_key("threaded") and not isinstance(args['threaded'],bool): raise Exception('threaded is not a boolean')
-
+        
         if args.has_key("channel") and isinstance(args['channel'],int): cid = args['channel']
         elif args.has_key("channel") and not isinstance(args['channel'],int): raise Exception('channel is not a integer')
 
@@ -129,23 +125,23 @@ class TeamSpeak:
             data = self.decode(self.sendCommand('clientmove '+self.encode({'clid':whoami['client_id'],'cid': cid})))
             if data['id'] != '0' and data['id'] != '770':
                 raise Exception('Could not move client: '+data['msg'])
-        command = 'servernotifyregister '+self.encode({'event':event})
-        if not cid==None: command = 'servernotifyregister '+self.encode({'event':event,'id': cid})
+        command = 'servernotifyregister ' + self.encode({'event':event})
+        if not cid==None: 
+            command = 'servernotifyregister ' + self.encode({'event':event,'id': cid})
         data = self.decode(self.sendCommand(command))
         if data['id'] != '0':
             raise Exception('listener registration refused: '+data['msg'])
         while True:
             try:
                 message = self.connection.read_until('\n\r',7200)
-                try: self.decode(message)['invokername']
-                except: continue
-                if threaded and callback != None: # Are we doing thread magic?
-                    raise NotImplementedError('Can\'t thread')
+                try:
+                    self.decode(message)['invokername']
+                except: 
+                    continue
                 elif callback != None:
                     if callback(self, message) == False: return
                 else: # Default callback
                     print self.decode(message)['invokername']+': '+self.decode(message)['msg']
-            except NotImplementedError, e: raise NotImplementedError('Can\'t thread') #DDDDDDDouble exception!
             except:
                 self.connect()
                 if username != None:
