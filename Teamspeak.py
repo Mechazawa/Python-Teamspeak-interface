@@ -106,8 +106,8 @@ class TeamSpeak:
         if args.has_key("callback") and hasattr(args['callback'], '__call__'): callback = args['callback']
         elif args.has_key("callback") and not hasattr(args['callback'], '__call__'): raise Exception('callback is not a function')
 
-        if args.has_key("threaded") and isinstance(args['threaded'],bool): threaded = args['threaded']
-        elif args.has_key("threaded") and not isinstance(args['threaded'],bool): raise Exception('threaded is not a boolean')
+        # if args.has_key("threaded") and isinstance(args['threaded'],bool): threaded = args['threaded']
+        # elif args.has_key("threaded") and not isinstance(args['threaded'],bool): raise Exception('threaded is not a boolean')
 
         if args.has_key("channel") and isinstance(args['channel'],int): cid = args['channel']
         elif args.has_key("channel") and not isinstance(args['channel'],int): raise Exception('channel is not a integer')
