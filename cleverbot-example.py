@@ -87,20 +87,6 @@ def quote(s, safe = '/'):   #quote('abc def') -> 'abc%20def'
         return ''.join(res)
 
 
-def main():
-        import sys
-        cb = Session()
-
-        q = ''
-        while q != 'bye':
-                try:
-                        q = raw_input("> ")
-                except KeyboardInterrupt:
-                        print
-                        sys.exit()
-                print cb.Ask(q)
-
-
 def chatCallback(ts, raw):
     message = ts.decode(raw)
     print message['invokername']+': '+message['msg']
